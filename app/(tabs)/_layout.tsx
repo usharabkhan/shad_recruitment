@@ -1,37 +1,66 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import { Tabs } from "expo-router";
+import {TabBarIcon } from "@/components/TabBarIcon";
+import  HeaderImage  from "@/components/HeaderImage";
+import { View, StyleSheet, Image, Text, SafeAreaView } from 'react-native';
+import { useState, useEffect } from "react";
+import { useFonts } from 'expo-font'
+export default function Layout() {
+    const [loaded] = useFonts({
+      'Inter': require('../../assets/fonts/Inter_18pt-Regular.ttf'),
+      'Archivo-Regular': require('../../assets/fonts/Archivo-Regular.ttf'),
+    });
 
-import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+    if (!loaded) {
+        return <View><Text>Loading...</Text></View>;
+    }
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
-          ),
-        }}
-      />
-    </Tabs>
-  );
+        <Tabs
+        screenOptions={{
+          header: () => <HeaderImage/>,
+          
+          tabBarActiveBackgroundColor: '#E4D6FA', // Active tab color
+          tabBarInactiveBackgroundColor: '#FFFFFF', // Inactive tab color
+          tabBarStyle: {
+            borderTopWidth: 0, // Remove border
+          },
+          tabBarLabelStyle: {
+            color: '#613493',
+            fontFamily: 'Inter',
+            fontSize: 12,
+          },
+        }}>
+            {/* <Tabs.Screen
+              name="home"
+              options={{
+                title: 'Dashboard',
+                // tabBarActiveBackgroundColor: '#613493',
+                // : '#613493',
+                tabBarIcon: ({ color, focused }) => (
+                  <TabBarIcon name={focused ? 'home' : 'home-outline'} color='#613493' />
+                ),
+              }}
+            /> */}
+            <Tabs.Screen
+              name="schedule"
+              options={{
+                title: 'Dashboard',
+                tabBarIcon: ({ color, focused }) => (
+                  <TabBarIcon name={focused ? 'home' : 'home-outline'} color='#613493' />
+                ),
+              }}
+            />
+            <Tabs.Screen
+            name="schools"
+            options={{
+              title: 'Schools',
+              tabBarIcon: ({ color, focused }) => (
+                <TabBarIcon name={focused ? 'school' : 'school-outline'} color='#613493' />
+              ),
+            }}
+            />
+        </Tabs>
+      )
+        ;
 }
+
+

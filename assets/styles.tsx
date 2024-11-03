@@ -1,0 +1,75 @@
+export const styles = {
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  list_container: {
+      flex: 1,
+      marginBottom: 20,
+      // padding: 10,
+      // paddingTop: 10,
+      backgroundColor: '#AADEE1',
+      borderRadius: 8,
+  },
+  schoolList: {
+      flex: 1,
+      marginBottom: 20,
+      padding: 10,
+      paddingTop: 10,
+      backgroundColor: '#C9C9C9',
+      borderRadius: 8,
+    },
+    schoolItem: {
+      margin: 15,
+      padding: 15,
+      backgroundColor: '#f9f9f9',
+      borderRadius: 8,
+      borderColor: '#e0e0e0',
+      borderWidth: 1,
+    },
+    schoolName: {
+      fontSize: 18,
+      fontFamily: 'Archivo-Regular',
+      color: '#613493',
+    },
+    schoolDetails: {
+      fontSize: 14,
+      fontFamily: 'Inter',
+      color: '#666',
+    },
+    heading: {
+      fontSize: 24,
+      fontFamily: 'Archivo-Regular',
+      // fontWeight: 700,
+      color: '#613493',
+      paddingTop: 10,
+      paddingBottom: 10,
+    },
+    headerIcon: {
+      color: '#613493',
+    },
+    quickActions: {
+      marginBottom: 20,
+    },
+    actionButton: {
+      backgroundColor: '#01a7e1',
+      paddingVertical: 12,
+      paddingHorizontal: 20,
+      borderRadius: 8,
+      marginBottom: 10,
+    },
+    actionText: {
+      color: 'white',
+      fontFamily: 'Inter',
+      fontSize: 16,
+      // textAlign: 'center',
+    },
+    visitcontainer: {
+      padding: 15,
+      backgroundColor: '#f9f9f9',
+      borderRadius: 8,
+      margin: 15,
+    },
+}
