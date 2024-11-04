@@ -19,6 +19,7 @@
     "@expo-google-fonts/inter": "^0.2.3",
     "@expo/config-plugins": "^8.0.10",
     "@expo/vector-icons": "^14.0.2",
+    "@react-native-picker/picker": "^2.9.0",
     "@react-navigation/native": "^6.0.2",
     "cors": "^2.8.5",
     "expo": "^51.0.38",

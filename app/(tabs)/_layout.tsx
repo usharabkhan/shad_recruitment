@@ -1,6 +1,6 @@
 import { Tabs } from "expo-router";
-import {TabBarIcon } from "@/components/TabBarIcon";
-import  HeaderImage  from "@/components/HeaderImage";
+import {TabBarIcon } from "@/components/misc/TabBarIcon";
+import  HeaderImage  from "@/components/misc/HeaderImage";
 import { View, StyleSheet, Image, Text, SafeAreaView } from 'react-native';
 import { useState, useEffect } from "react";
 import { useFonts } from 'expo-font'
@@ -29,19 +29,8 @@ export default function Layout() {
             fontSize: 12,
           },
         }}>
-            {/* <Tabs.Screen
-              name="home"
-              options={{
-                title: 'Dashboard',
-                // tabBarActiveBackgroundColor: '#613493',
-                // : '#613493',
-                tabBarIcon: ({ color, focused }) => (
-                  <TabBarIcon name={focused ? 'home' : 'home-outline'} color='#613493' />
-                ),
-              }}
-            /> */}
             <Tabs.Screen
-              name="schedule"
+              name="home"
               options={{
                 title: 'Dashboard',
                 tabBarIcon: ({ color, focused }) => (

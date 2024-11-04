@@ -1,78 +1,112 @@
-import React, {useState, useEffect} from 'react';
-import { View, Text, TextInput, TouchableOpacity,
-   StyleSheet, ScrollView, SafeAreaView, Dimensions } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
-import { Stack } from 'expo-router';
-import * as Font from 'expo-font';
-import SchoolDetailBox from '@/components/SchoolDetailBox';
-import SummaryGraph from '@/components/SummaryGraph'; 
-import {styles} from '@/assets/styles';
+import { View, Text, SafeAreaView, TouchableOpacity,ScrollView, RefreshControl } from "react-native";
+import { styles } from '@/assets/styles'
+import PastVisitBox from "@/components/school/VisitBox";
+import LoadingSpinner from "@/components/misc/Loading";
+import RecruitmentSummary from "@/components/RecruitmentSummary";
+import AddVisitModal from "@/components/modals/AddVisit";
 
-const screenWidth = Dimensions.get('window').width;
+import { useEffect, useState } from "react";
+import { API_URL } from "../constants/constant";
 
-export default function Home() {
-
-  const schoolData = [
-    {name : "Central High", address: "123 Elm Street", type: "Public High School"},
-    {name : "Maple Academy", address: "456 Maple Avenue", type: "Private Academy"},
-    {name : "Oak Charter", address: "789 Oak Boulevard", type: "Charter School"},
-    
-  ]
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <View>
-          <Text style={styles.heading}>Dashboard</Text>
-        </View>
-        <SummaryGraph/>
-        {/* Header */}
-        <View style={myStyles.header}>
-          <Text style={styles.heading}>Recent Visits</Text>
-          <FontAwesome name="user-circle" size={40} color={styles.headerIcon.color} />
-        </View>
-
-        {/* School list */}
-        <View style={styles.list_container}>
-          {/* <SchoolDetailBox data={schoolData}/> */}
-        </View>
-        
-      </ScrollView>
-    </SafeAreaView>
-  );
+interface visit {
+    visit_id: number;
+    school_id: number;
+    date: Date;
+    students: number;
+    name: string;
+    contact: string;
 }
 
-const myStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  heading: {
-    fontSize: 24,
-    fontFamily: 'Archivo-Regular',
-    color: '#613493',
-  },
-  headerIcon: {
-    color: '#613493',
-  },
-  
-  contactButton: {
-    backgroundColor: '#613493',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-  },
-  contactText: {
-    color: 'white',
-    fontFamily: 'Inter',
-    fontSize: 16,
-    textAlign: 'center',
-  },
-});
+interface summaryData {
+    total_schools: number;
+    total_visits: number;
+    total_students: number;
+    future_visits: number;
+}
+
+export default function HomeScreen(){
+    const [visits, setVisits] = useState<visit[]>([])
+    const [summary, setSummary] = useState<summaryData>(
+        {
+            total_schools: 0,
+            total_visits: 0,
+            total_students: 0,
+            future_visits: 0,
+        }
+    );
+    const [loaded, setLoaded] = useState(false)
+    const [refreshing, setRefreshing] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+
+    const handleRefresh = async () => {
+        await fetchVisits(); // Assuming fetchVisits is an async function
+        await fetchSummary(); // Assuming fetchSummary is an async function
+    };
+
+    const fetchVisits = async () => {
+        setRefreshing(true); // Set refreshing to true before fetching
+        try {
+            const response = await fetch(API_URL + 'visits');
+            const json = await response.json();
+            setVisits(json);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            setRefreshing(false); // Set refreshing to false after fetching
+        }
+    };
+
+    const fetchSummary = async () => {
+        try {
+            const response = await fetch(API_URL + 'summary');
+            const json = await response.json();
+            setSummary(json);
+            console.log(json);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchSummary();
+        fetchVisits();
+    }, [])
+
+    useEffect(() =>{
+        setLoaded(visits && visits.length > 0);
+    }, [visits])
+
+    return(
+            
+        <SafeAreaView style={styles.container}>
+            <AddVisitModal visible={modalVisible} onClose={() => setModalVisible(false)}/>
+            <Text style={styles.heading}>Recruitment Summary</Text>
+
+            <View style={[styles.list_container, {flex: 0}]}>
+                <RecruitmentSummary data={summary}/>
+            </View>
+            
+            <Text style={styles.heading}>Visits</Text>
+
+            <ScrollView style={styles.list_container} refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing} // Indicates if the view is currently refreshing
+                        onRefresh={handleRefresh} // Fetch visits on refresh
+                    />
+                }>
+
+                {loaded ? (
+                    visits.map(v => (
+                        <PastVisitBox key={v.visit_id} data={v} /> // Ensure visit_id is unique
+                    ))
+                ) : (
+                    <LoadingSpinner/>
+                )}
+            </ScrollView>
+
+            <TouchableOpacity style={styles.actionButton} onPress={() => setModalVisible(true)}>
+                <Text style={styles.actionText}>+ Add New Visit</Text>
+            </TouchableOpacity>
+        </SafeAreaView>
+    );
+}

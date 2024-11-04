@@ -72,4 +72,15 @@ export const styles = {
       borderRadius: 8,
       margin: 15,
     },
+    input: {
+      flex: 1,
+      height: 40,
+      borderColor: '#ccc',
+      borderWidth: 1,
+      borderRadius: 8,
+      paddingLeft: 10,
+      fontFamily: 'Inter',
+      color: '#333',
+      backgroundColor: 'white',
+  },
 }

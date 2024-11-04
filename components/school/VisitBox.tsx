@@ -9,6 +9,7 @@ interface visit {
   date: Date;
   students: number;
   name: string;
+  contact: string;
 }
 
 interface PastVisitBoxProps {
@@ -16,7 +17,11 @@ interface PastVisitBoxProps {
 }
 
 const PastVisitBox = ( { data } : PastVisitBoxProps) => {
-  const formattedDate = new Date(data.date).toLocaleDateString('en-US', {
+  const visitDate = new Date(data.date); 
+  const isPastVisit = visitDate < new Date(); // Check if the visit date is in the past
+  const bg = isPastVisit ? '#f9f9f9' : '#e0f7fa'; // Change background for future visits
+
+  const formattedDate = visitDate.toLocaleDateString('en-US', {
     year: 'numeric',  // Use 'numeric' for full year (e.g., 2024)
     month: 'long',    // Use 'long' for full month name (e.g., September)
     day: 'numeric'    // Use 'numeric' for day of the month
@@ -27,10 +32,19 @@ const PastVisitBox = ( { data } : PastVisitBoxProps) => {
   };
 
   return (
-    <TouchableOpacity  style={styles.visitcontainer} onPress={handlePress}>
+    <TouchableOpacity  style={[styles.visitcontainer, {backgroundColor: bg}]} onPress={handlePress}>
         <Text style={styles.schoolName}>{data.name}</Text>
-        <Text style={styles.schoolDetails}>Visited on: {formattedDate}</Text>
-        <Text style={styles.schoolDetails}>Attendance: {data.students}</Text>
+        {isPastVisit ? ( 
+          <View>
+            <Text style={styles.schoolDetails}>Visited on: {formattedDate}</Text>
+            <Text style={styles.schoolDetails}>Attendance: {data.students}</Text>
+          </View>
+        ) : ( 
+          <View>
+            <Text style={styles.schoolDetails}>Scheduled on: {formattedDate}</Text>
+            <Text style={styles.schoolDetails}>Contact: {data.contact}</Text>
+          </View>
+        )}
     </TouchableOpacity>
   );
 };

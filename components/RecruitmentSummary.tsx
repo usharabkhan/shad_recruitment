@@ -1,31 +1,34 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const RecruitmentSummary = () => {
-    const summaryData = {
-        schoolsVisited: 5,
-        interactions: 5,
-        schoolsContacted: 50,
-        futureVisits: 10,
-    }
-    
+interface summaryData {
+  total_schools: number;
+  total_visits: number;
+  total_students: number;
+  future_visits: number;
+}
+
+interface props {
+  data: summaryData
+}
+const RecruitmentSummary = ({ data } : props) => {
   return (
     <View style={styles.container}>
       <View style={styles.summaryItem}>
         <Text style={styles.label}>No. of Schools Visited:</Text>
-        <Text style={styles.value}>{summaryData.schoolsVisited}</Text>
+        <Text style={styles.value}>{data.total_visits}</Text>
       </View>
       <View style={styles.summaryItem}>
         <Text style={styles.label}>No. of Interactions:</Text>
-        <Text style={styles.value}>{summaryData.interactions}</Text>
+        <Text style={styles.value}>{data.total_students}</Text>
       </View>
       <View style={styles.summaryItem}>
         <Text style={styles.label}>No. of Schools Contacted:</Text>
-        <Text style={styles.value}>{summaryData.schoolsContacted}</Text>
+        <Text style={styles.value}>{data.total_schools}</Text>
       </View>
       <View style={styles.summaryItem}>
         <Text style={styles.label}>Future Visits:</Text>
-        <Text style={styles.value}>{summaryData.futureVisits}</Text>
+        <Text style={styles.value}>{data.future_visits}</Text>
       </View>
     </View>
   );
