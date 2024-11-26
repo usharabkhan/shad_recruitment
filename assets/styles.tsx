@@ -1,18 +1,24 @@
+import { DimensionValue } from "react-native";
+
 export const styles = {
-  container: {
+  main_container: {
     flex: 1,
     backgroundColor: 'white',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+  },
+  sub_container: {
+    paddingHorizontal: 20,
+    marginBottom: 20,
+    flex: 1,
   },
   list_container: {
-      flex: 1,
-      marginBottom: 20,
-      // padding: 10,
-      // paddingTop: 10,
-      backgroundColor: '#AADEE1',
-      borderRadius: 8,
-  },
+    width: '100%' as DimensionValue, 
+    marginTop: 15,
+    padding: 0, 
+    backgroundColor: '#AADEE1',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(97, 52, 147, 0.5)',
+},
   schoolList: {
       flex: 1,
       marginBottom: 20,
@@ -21,66 +27,106 @@ export const styles = {
       backgroundColor: '#C9C9C9',
       borderRadius: 8,
     },
-    schoolItem: {
+  schoolItem: {
       margin: 15,
       padding: 15,
       backgroundColor: '#f9f9f9',
       borderRadius: 8,
-      borderColor: '#e0e0e0',
       borderWidth: 1,
+      borderColor: 'rgba(97, 52, 147, 0.5)',
     },
-    schoolName: {
+  schoolName: {
       fontSize: 18,
       fontFamily: 'Archivo-Regular',
       color: '#613493',
     },
-    schoolDetails: {
+  schoolDetails: {
       fontSize: 14,
       fontFamily: 'Inter',
       color: '#666',
     },
-    heading: {
+  heading: {
       fontSize: 24,
       fontFamily: 'Archivo-Regular',
-      // fontWeight: 700,
       color: '#613493',
       paddingTop: 10,
       paddingBottom: 10,
+      borderBottomWidth: 1, 
+      borderBottomColor: 'rgba(97, 52, 147, 0.5)',
     },
-    headerIcon: {
+  headerIcon: {
       color: '#613493',
     },
-    quickActions: {
-      marginBottom: 20,
-    },
-    actionButton: {
+  buttonContainer: {
+    marginTop: 15,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(97, 52, 147, 0.5)',
+    flexDirection: 'row' as 'row',  // Explicitly typing to 'row'
+    justifyContent: 'center' as 'center',
+    paddingInline: 10,
+  },
+  actionButton: {
       backgroundColor: '#01a7e1',
       paddingVertical: 12,
-      paddingHorizontal: 20,
+      paddingHorizontal: 18,
       borderRadius: 8,
-      marginBottom: 10,
+      margin: 10,
+      alignSelf: 'center' as 'center',
+      alignItems: 'center' as 'center',
+      borderWidth: 0.8,
+      borderColor: 'rgba(97, 52, 147, 0.5)',
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 1,
+      },
+      shadowOpacity: 0.2,
+      shadowRadius: 1.5,
+      elevation: 2,
     },
-    actionText: {
+  actionText: {
       color: 'white',
       fontFamily: 'Inter',
       fontSize: 16,
-      // textAlign: 'center',
+      alignSelf: 'center' as 'center',
     },
-    visitcontainer: {
+  visitcontainer: {
       padding: 15,
       backgroundColor: '#f9f9f9',
       borderRadius: 8,
       margin: 15,
+      borderWidth: 1,
+      borderColor: 'rgba(97, 52, 147, 0.5)',
     },
-    input: {
+  input: {
       flex: 1,
+      minHeight: 40,
       height: 40,
       borderColor: '#ccc',
       borderWidth: 1,
       borderRadius: 8,
-      paddingLeft: 10,
+      paddingHorizontal: 10,
       fontFamily: 'Inter',
-      color: '#333',
+      color: 'black',
       backgroundColor: 'white',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center' as 'center',
+    alignItems: 'center' as 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Dark background
+  },
+  modalContent: {
+      width: '80%' as '80%',
+      paddingTop: 10,
+      padding: 20,
+      backgroundColor: 'white',
+      borderRadius: 10,
+      elevation: 5,
+  },
+  cancelBtn: {
+    backgroundColor: '#FF6347',
+    width: '50%' as '50%',
+    marginBottom: 10,
   },
 }

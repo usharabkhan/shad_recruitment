@@ -4,6 +4,7 @@ import  HeaderImage  from "@/components/misc/HeaderImage";
 import { View, StyleSheet, Image, Text, SafeAreaView } from 'react-native';
 import { useState, useEffect } from "react";
 import { useFonts } from 'expo-font'
+
 export default function Layout() {
     const [loaded] = useFonts({
       'Inter': require('../../assets/fonts/Inter_18pt-Regular.ttf'),

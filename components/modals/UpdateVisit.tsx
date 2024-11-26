@@ -1,27 +1,36 @@
 // CustomModal.tsx (make sure to rename the file to .tsx if using TypeScript)
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Modal, View, Text, TouchableOpacity, TextInput, StyleSheet, 
   TouchableWithoutFeedback, KeyboardAvoidingView, Platform, Keyboard, 
   Button} from 'react-native';
 import { useState } from 'react';
 import { styles } from '@/assets/styles';
 import DateTimePicker, {DateTimePickerEvent} from '@react-native-community/datetimepicker';
-import { API_URL } from '@/app/constants/constant';
+import { API_URL, RED_COLOR } from '@/app/constants/constant';
+import { SchoolVisit } from '@/app/constants/types';
+import { AntDesign } from '@expo/vector-icons';
+import axios from 'axios';
 
 interface props {
-  schoolId : number;
-  schoolName : string;
+  visit? : SchoolVisit;
+  schoolId? : number;
+  schoolName? : string;
   visible: boolean; // Define 'visible' as a boolean
   onClose: () => void; // Define 'onClose' as a function that returns void
   onAdd: () => void;
 }
 
-const AddVisitModal: React.FC<props> = ({ schoolId, schoolName, visible, onClose, onAdd }) => {
+const UpdateVisitModal: React.FC<props> = ({ visit, visible, schoolId, schoolName, onClose, onAdd }) => {
     const [attendance, setAttendance] = useState('0');
-    // const [date, setDate] = useState(new Date(Date.now()));
-
     const [showPicker, setShowPicker] = useState(Platform.OS == 'android' ? false : true);
     const [selectedDate, setSelectedDate] = useState(new Date());
+
+    useEffect(() => {
+      if (visit && visit.students !== undefined) {
+        setAttendance(visit.students.toString());
+        setSelectedDate(new Date(visit.date));
+      }
+    }, [visit])
 
     const handleChange = (event: any, date?: Date) => {
       if (Platform.OS === 'android') {
@@ -30,23 +39,40 @@ const AddVisitModal: React.FC<props> = ({ schoolId, schoolName, visible, onClose
       if (date) {
           setSelectedDate(date); // Update the selected date
       }
-  };
+    };
 
-    const handleAddVisit = async () => {
+    const handleDelete = async(id : number) => {
       try {
-        const newVisit = {schoolId, selectedDate, attendance};
-        const response = await fetch(API_URL + "visits/add", 
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(newVisit),
+          const response = await axios.delete(API_URL + 'visits/delete/' + id);
+          
+        onClose();
+      }
+      catch (error) {
+          console.log(error)
+      }
+  }
+    const handleUpdateAddVisit = async () => {
+      try {
+        var method = "add";
+        var response;
+        if (visit) {
+          schoolId = visit.school_id;
+          const v_id = visit.visit_id;
+          if ((visit.students.toString() != attendance) && (visit.date != selectedDate)){
+            const newVisit = {v_id, schoolId, selectedDate, attendance};
+            response = await axios.post(API_URL + "visits/update", newVisit)
           }
-        )
+          else{
+            return
+          }
+        }
+        else {
+          const newVisit = {schoolId, selectedDate, attendance};
+          response = await axios.post(API_URL + "visits/add", newVisit)
+        }
+        
 
-        const json = await response.json()
-        if (json.message == "Success"){
+        if (response.data.message == "Success"){
           onAdd();
         }
       } catch (error){
@@ -69,7 +95,25 @@ const AddVisitModal: React.FC<props> = ({ schoolId, schoolName, visible, onClose
             >
                 <View style={localStyles.modalContainer}>
                     <View style={localStyles.modalContent}>
-                        <Text style={styles.heading}>{schoolName}</Text>
+                        {/* HEADING */}
+                        <View style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between', // Ensures space between text and icon
+                            alignItems: 'center',           // Vertically center items
+                            borderBottomWidth: 1,
+                            borderBottomColor: 'rgba(97, 52, 147, 0.5)'
+                        }}>
+                          
+                          <Text style={[styles.heading, { flex: 1, borderBottomWidth: 0 }]}>
+                            {visit ? visit.name : schoolName}
+                          </Text>
+                          
+                          {visit && <TouchableOpacity style={{padding: 2}} onPress={() => handleDelete(visit.visit_id)}>
+                              <AntDesign name="delete" size={20} color={RED_COLOR} />
+                          </TouchableOpacity>}
+                        </View>
+
+                        {/* INPUT FIELDS */}
                         <View style={styles.list_container}>
                             <View style={{flexDirection: 'row', alignItems: 'center', margin: 10}}>
                               <Text style={styles.schoolName}>Date: </Text>
@@ -93,17 +137,22 @@ const AddVisitModal: React.FC<props> = ({ schoolId, schoolName, visible, onClose
                               <Text style={styles.schoolName}>No. of Attendees: </Text>
                               <TextInput
                                   style={[styles.input, { flex: 1, margin: 10 }]}
-                                  placeholder="Attendance"
+                                  placeholder={visit ? visit.students.toString() : "Attendance"}
                                   value={attendance}
                                   onChangeText={setAttendance}
                               />
                             </View>
                         </View>
+
+                        {/* BUTTON SECTION */}
                         <View style={styles.buttonContainer}>
-                            <TouchableOpacity style={[styles.actionButton, { width: '50%' }]} onPress={handleAddVisit}>
-                                <Text style={styles.actionText}>Add Visit</Text>
+                            <TouchableOpacity
+                                style={[styles.actionButton]}
+                                onPress={handleUpdateAddVisit}
+                            >
+                                <Text style={styles.actionText}>{visit ? "Update" : "Add"} Visit</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={onClose} style={[styles.actionButton, styles.cancelBtn]} >
+                            <TouchableOpacity onPress={onClose} style={[styles.actionButton, styles.cancelBtn]}>
                                 <Text style={styles.actionText}>Cancel</Text>
                             </TouchableOpacity>
                         </View>
@@ -115,10 +164,11 @@ const AddVisitModal: React.FC<props> = ({ schoolId, schoolName, visible, onClose
 
   );
 };
-export default AddVisitModal;
+export default UpdateVisitModal;
 
 const localStyles = StyleSheet.create(
   {
+    
   modalContainer: {
     flex: 1,
     justifyContent: 'center',

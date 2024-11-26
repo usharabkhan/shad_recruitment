@@ -1,6 +1,6 @@
 // CustomModal.tsx (make sure to rename the file to .tsx if using TypeScript)
 import React from 'react';
-import { Modal, View, Text, Button, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, TextInput, StyleSheet, TouchableWithoutFeedback, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { useState } from 'react';
 import { styles } from '@/assets/styles';
 import { API_URL } from '@/app/constants/constant';
@@ -61,43 +61,56 @@ const AddSchool: React.FC<props> = ( { visible, onClose } ) => {
             visible={visible}
             onRequestClose={onClose}
         >
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <KeyboardAvoidingView
+                style={{ flex: 1 }}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            >
             <View style={localStyles.modalContainer}>
                 <View style={localStyles.modalContent}>
                     <Text style={styles.heading}>Add New School</Text>
-                    <View style={[styles.list_container, {flex: 0}]}>
+                    <View style={styles.list_container}>
                     <TextInput
                         style={[styles.input, {flex: 0, margin: 10}]}
                         placeholder="School Name"
+                        placeholderTextColor="#999"
                         value={name}
                         onChangeText={setName}
                     />
                     <TextInput
                         style={[styles.input, {flex: 0, margin: 10}]}
                         placeholder="Address"
+                        placeholderTextColor="#999"
                         value={address}
                         onChangeText={setAddress}
                     />
                     <TextInput
                         style={[styles.input, {flex: 0, margin: 10}]}
                         placeholder="Contact Person"
+                        placeholderTextColor="#999"
                         value={contact}
                         onChangeText={setContact}
                     />
                     <TextInput
                         style={[styles.input, {flex: 0, margin: 10}]}
                         placeholder="Type (Public/Private)"
+                        placeholderTextColor="#999"
                         value={type}
                         onChangeText={setType}
                     />
                     </View>
-                    <TouchableOpacity style={[styles.actionButton, {alignItems: 'center'}]} onPress={handleAddSchool} >
-                      <Text style={styles.actionText}>Add School</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={onClose} style={[styles.actionButton, localStyles.cancelBtn]} >
-                      <Text style={styles.actionText}>Cancel</Text>
-                    </TouchableOpacity>
+                    <View style={styles.buttonContainer}>
+                      <TouchableOpacity style={[styles.actionButton, {width: '50%'}]} onPress={handleAddSchool} >
+                        <Text style={styles.actionText}>Add School</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={onClose} style={[styles.actionButton, localStyles.cancelBtn]} >
+                        <Text style={styles.actionText}>Cancel</Text>
+                      </TouchableOpacity>
+                    </View>
                 </View>
             </View>
+            </KeyboardAvoidingView>
+            </TouchableWithoutFeedback>
         </Modal>
     );
 };
@@ -105,8 +118,9 @@ export default AddSchool;
 
 const localStyles = StyleSheet.create({
     cancelBtn: {
-      backgroundColor: '#FF6347', 
-      alignItems: 'center',
+      backgroundColor: '#FF6347',
+      width: '50%',
+      marginBottom: 10,
     },
     modalContainer: {
         flex: 1,
@@ -116,22 +130,10 @@ const localStyles = StyleSheet.create({
     },
     modalContent: {
         width: '80%',
+        paddingTop: 10,
         padding: 20,
         backgroundColor: 'white',
         borderRadius: 10,
         elevation: 5,
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 20,
-    },
-    input: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 15,
-        paddingHorizontal: 10,
-        borderRadius: 5,
     },
 });

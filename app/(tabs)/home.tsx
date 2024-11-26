@@ -1,21 +1,15 @@
 import { View, Text, SafeAreaView, TouchableOpacity,ScrollView, RefreshControl } from "react-native";
 import { styles } from '@/assets/styles'
-import PastVisitBox from "@/components/school/VisitBox";
+import VisitDetailCard from "@/components/school/VisitDetailCard";
 import LoadingSpinner from "@/components/misc/Loading";
 import RecruitmentSummary from "@/components/RecruitmentSummary";
 import AddVisitModal from "@/components/modals/AddVisit";
 
 import { useEffect, useState } from "react";
-import { API_URL } from "../constants/constant";
-
-interface visit {
-    visit_id: number;
-    school_id: number;
-    date: Date;
-    students: number;
-    name: string;
-    contact: string;
-}
+import { API_URL, PURPLE_COLOR } from "../constants/constant";
+import UpdateVisitModal from "@/components/modals/UpdateVisit";
+import { SchoolVisit } from "../constants/types";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 interface summaryData {
     total_schools: number;
@@ -25,7 +19,14 @@ interface summaryData {
 }
 
 export default function HomeScreen(){
-    const [visits, setVisits] = useState<visit[]>([])
+    const [selectedVisit, setSelectedVisit] = useState<SchoolVisit>()
+
+    const [visits, setVisits] = useState<SchoolVisit[]>([])
+    const [refreshing, setRefreshing] = useState(false);
+
+    const [updateVisitVisible, setUpdateVisitVisible] = useState(false);
+    
+  const [contentHeight, setContentHeight] = useState(0);
     const [summary, setSummary] = useState<summaryData>(
         {
             total_schools: 0,
@@ -35,12 +36,12 @@ export default function HomeScreen(){
         }
     );
     const [loaded, setLoaded] = useState(false)
-    const [refreshing, setRefreshing] = useState(false);
-    const [modalVisible, setModalVisible] = useState(false);
 
     const handleRefresh = async () => {
+        setRefreshing(true)
         await fetchVisits(); // Assuming fetchVisits is an async function
         await fetchSummary(); // Assuming fetchSummary is an async function
+        setRefreshing(false)
     };
 
     const fetchVisits = async () => {
@@ -61,11 +62,21 @@ export default function HomeScreen(){
             const response = await fetch(API_URL + 'summary');
             const json = await response.json();
             setSummary(json);
-            console.log(json);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
+
+    const toggleUpdateVisit = async (v? : SchoolVisit) => {
+        if (v) {
+            setSelectedVisit(v)
+        }
+        else {
+            setSelectedVisit(undefined)
+        }
+        setUpdateVisitVisible(!updateVisitVisible)
+        handleRefresh();
+    }
 
     useEffect(() => {
         fetchSummary();
@@ -78,35 +89,58 @@ export default function HomeScreen(){
 
     return(
             
-        <SafeAreaView style={styles.container}>
-            <AddVisitModal visible={modalVisible} onClose={() => setModalVisible(false)}/>
-            <Text style={styles.heading}>Recruitment Summary</Text>
+        <SafeAreaView style={styles.main_container} >
+            <UpdateVisitModal 
+                visit = {selectedVisit}
+                visible={updateVisitVisible} 
+                onClose = {() => toggleUpdateVisit()}
+                onAdd = {handleRefresh}
+            />
+            <View style={styles.sub_container}>
+                <View style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between', // Ensures space between text and icon
+                        alignItems: 'center',           // Vertically center items
+                        borderBottomWidth: 1,
+                        borderBottomColor: 'rgba(97, 52, 147, 0.5)'
+                    }}>
+                    
+                    <Text style={[styles.heading, { flex: 1, borderBottomWidth: 0 }]}>
+                        Recruitment Summary
+                    </Text>
+                    
+                    <TouchableOpacity style={{padding: 2, marginRight: 5}} onPress={() => handleRefresh}>
+                        <FontAwesome name="refresh" size={24} color={PURPLE_COLOR} />
+                    </TouchableOpacity>
+                </View>
+                {/* <View>
+                    <Text style={[styles.heading]}>Recruitment Summary</Text>
+                </View> */}
 
-            <View style={[styles.list_container, {flex: 0}]}>
-                <RecruitmentSummary data={summary}/>
+                <View style={[styles.list_container]}>
+                    
+                    <RecruitmentSummary data={summary}/>
+                </View>
+                    
+                    <Text style={[styles.heading]}>Visits</Text>
+
+                    <ScrollView style={[styles.list_container, {marginTop: 15}]} refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing} // Indicates if the view is currently refreshing
+                                onRefresh={handleRefresh} // Fetch visits on refresh
+                                tintColor={"#613493"}
+                            />
+                        } contentContainerStyle={{ flexGrow: 1 }} >
+
+                        {loaded ? (
+                            visits.map(v => (
+                                <VisitDetailCard key={v.visit_id} data={v} onTouch={() => toggleUpdateVisit(v)}/> // Ensure visit_id is unique
+                            ))
+                        ) : (
+                            <LoadingSpinner/>
+                        )}
+                    </ScrollView>
             </View>
-            
-            <Text style={styles.heading}>Visits</Text>
-
-            <ScrollView style={styles.list_container} refreshControl={
-                    <RefreshControl
-                        refreshing={refreshing} // Indicates if the view is currently refreshing
-                        onRefresh={handleRefresh} // Fetch visits on refresh
-                    />
-                }>
-
-                {loaded ? (
-                    visits.map(v => (
-                        <PastVisitBox key={v.visit_id} data={v} /> // Ensure visit_id is unique
-                    ))
-                ) : (
-                    <LoadingSpinner/>
-                )}
-            </ScrollView>
-
-            <TouchableOpacity style={styles.actionButton} onPress={() => setModalVisible(true)}>
-                <Text style={styles.actionText}>+ Add New Visit</Text>
-            </TouchableOpacity>
         </SafeAreaView>
     );
 }

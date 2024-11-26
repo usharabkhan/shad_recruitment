@@ -2,25 +2,26 @@ import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { styles } from '@/assets/styles'; // Assuming you're using the same styles as in the previous example
 import { useRouter } from 'expo-router';
+import { SchoolVisit } from '@/app/constants/types';
 
-interface visit {
-  visit_id: number;
-  school_id: number;
-  date: Date;
-  students: number;
-  name: string;
-  contact: string;
+interface VisitDetailCardProps {
+  data: SchoolVisit;
+  onTouch: () => void
 }
 
-interface PastVisitBoxProps {
-  data: visit;
-}
-
-const PastVisitBox = ( { data } : PastVisitBoxProps) => {
+const VisitDetailCard = ( { data, onTouch } : VisitDetailCardProps) => {
   const visitDate = new Date(data.date); 
   const isPastVisit = visitDate < new Date(); // Check if the visit date is in the past
-  const bg = isPastVisit ? '#f9f9f9' : '#e0f7fa'; // Change background for future visits
 
+  const ContainerStyle = [
+    styles.visitcontainer,
+    isPastVisit ? {
+      backgroundColor: '#f9f9f9',
+    } :
+    {
+      backgroundColor: '#e0f7fa',
+    }
+  ]
   const formattedDate = visitDate.toLocaleDateString('en-US', {
     year: 'numeric',  // Use 'numeric' for full year (e.g., 2024)
     month: 'long',    // Use 'long' for full month name (e.g., September)
@@ -32,21 +33,21 @@ const PastVisitBox = ( { data } : PastVisitBoxProps) => {
   };
 
   return (
-    <TouchableOpacity  style={[styles.visitcontainer, {backgroundColor: bg}]} onPress={handlePress}>
+    <TouchableOpacity  style={ContainerStyle} onPress={onTouch}>
         <Text style={styles.schoolName}>{data.name}</Text>
         {isPastVisit ? ( 
           <View>
-            <Text style={styles.schoolDetails}>Visited on: {formattedDate}</Text>
-            <Text style={styles.schoolDetails}>Attendance: {data.students}</Text>
+            <Text style={styles.schoolDetails}>Visited on: {formattedDate || 'Never visited'}</Text>
+            <Text style={styles.schoolDetails}>Attendance: {data.students || '0'}</Text>
           </View>
         ) : ( 
           <View>
-            <Text style={styles.schoolDetails}>Scheduled on: {formattedDate}</Text>
-            <Text style={styles.schoolDetails}>Contact: {data.contact}</Text>
+            <Text style={styles.schoolDetails}>Scheduled on: {formattedDate || '1970'}</Text>
+            <Text style={styles.schoolDetails}>Contact: {data.contact || 'No contact'}</Text>
           </View>
         )}
     </TouchableOpacity>
   );
 };
 
-export default PastVisitBox;
+export default VisitDetailCard;
