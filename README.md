@@ -38,18 +38,18 @@ Effortlessly manage recruitment efforts for the program with this fullstack solu
 
 | **Dashboard** | **Schools Page** |  
 |:-------------:|:-------------------:|
-| *![Home-Page](screenshots/HomePage.png)* | *![Schools-Page](screenshots/SchoolsPage.png)* |  |  
+| *![Home-Page](screenshots/HomePage.PNG)* | *![Schools-Page](screenshots/SchoolsPage.png)* |  |  
 
 ### School
 | **School Overview** | **Edit School Activity** | **Delete School** |  
 |:-------------:|:-------------------:|:-------------------:|  
-| *![Details-Page](screenshots/SchoolDetail.png)* | *![Details-Edit-Page](screenshots/SchoolDetailEdit.png)*| *![Details-Page](screenshots/DeleteSchoolModal.png)* |  
+| *![Details-Page](screenshots/SchoolDetail.PNG)* | *![Details-Edit-Page](screenshots/SchoolDetailEdit.PNG)*| *![Details-Page](screenshots/DeleteSchoolModal.PNG)* |  
 
 
 ###  Modals
 | **Add Visit** | **Add Activity** | **Add School** |  
 |:-------------:|:-------------------:|:-------------------:|  
-| *![Visit-Modal](screenshots/AddVisitModal.png)* | *![Activity-Modal](screenshots/AddActivityModal.png)* | *![Add-School-School](screenshots/AddSchoolModal.png)* |  
+| *![Visit-Modal](screenshots/AddVisitModal.PNG)* | *![Activity-Modal](screenshots/AddActivityModal.PNG)* | *![Add-School-School](screenshots/AddSchoolModal.PNG)* |  
 
 
 ---
