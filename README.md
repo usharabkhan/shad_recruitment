@@ -49,11 +49,11 @@ Effortlessly manage recruitment efforts for the program with this fullstack solu
 ###  Modals
 | **Add Visit** | **Add Activity** | **Add School** |  
 |:-------------:|:-------------------:|:-------------------:|  
-| *![Visit-Modal](screenshots/AddVisitModal.PNG)* | *![Activity-Modal](screenshots/AddActivityModal.PNG)* | *![Add-School-School](screenshots/AddSchoolModal.PNG)* |  
+| *![Visit-Modal](screenshots/AddVisitModal.PNG)* | *![Activity-Modal](screenshots/AddActivityModal.PNG)* | *![Add-School-School](screenshots/AddSchooLModal.PNG)* |  
 
 
 ---
 
-## View video demonstration
+## View video demonstration on YouTube
 
 [![Watch the video](https://img.youtube.com/vi/l2cMZ-oSdgM/0.jpg)](https://youtube.com/shorts/l2cMZ-oSdgM)
