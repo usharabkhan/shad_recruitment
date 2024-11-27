@@ -18,7 +18,6 @@ const RecruitmentSummary = ({ data }: { data: any }) => {
   return (
     
     <View style={styles.container}>
-      {/* <Text style={styles.heading}>Recruitment Summary</Text> */}
       
       <View style={styles.summaryItem}>
         <MaterialIcons name="school" size={24} color={RED_COLOR} />
@@ -49,7 +48,6 @@ const RecruitmentSummary = ({ data }: { data: any }) => {
 
 const styles = StyleSheet.create({
   container: {
-    margin: 15,
     padding: 15,
     paddingVertical: 10,
     backgroundColor: '#fff',

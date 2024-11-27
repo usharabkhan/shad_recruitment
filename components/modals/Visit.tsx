@@ -10,6 +10,7 @@ import { API_URL, RED_COLOR } from '@/app/constants/constant';
 import { SchoolVisit } from '@/app/constants/types';
 import { AntDesign } from '@expo/vector-icons';
 import axios from 'axios';
+import { showMessage } from '../misc/ShowMessage';
 
 interface props {
   visit? : SchoolVisit;
@@ -20,7 +21,7 @@ interface props {
   onAdd: () => void;
 }
 
-const UpdateVisitModal: React.FC<props> = ({ visit, visible, schoolId, schoolName, onClose, onAdd }) => {
+const VisitModal: React.FC<props> = ({ visit, visible, schoolId, schoolName, onClose, onAdd }) => {
     const [attendance, setAttendance] = useState('0');
     const [showPicker, setShowPicker] = useState(Platform.OS == 'android' ? false : true);
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -44,16 +45,19 @@ const UpdateVisitModal: React.FC<props> = ({ visit, visible, schoolId, schoolNam
     const handleDelete = async(id : number) => {
       try {
           const response = await axios.delete(API_URL + 'visits/delete/' + id);
-          
-        onClose();
+          if (response.data.message == "Success"){
+            showMessage("Successfully deleted visit", "success");
+          }
+          onClose();
       }
       catch (error) {
           console.log(error)
+          showMessage("Error deleting visit", "error");
       }
   }
     const handleUpdateAddVisit = async () => {
       try {
-        var method = "add";
+        var method = "added";
         var response;
         if (visit) {
           schoolId = visit.school_id;
@@ -61,6 +65,7 @@ const UpdateVisitModal: React.FC<props> = ({ visit, visible, schoolId, schoolNam
           if ((visit.students.toString() != attendance) && (visit.date != selectedDate)){
             const newVisit = {v_id, schoolId, selectedDate, attendance};
             response = await axios.post(API_URL + "visits/update", newVisit)
+            method = "updated"
           }
           else{
             return
@@ -74,11 +79,15 @@ const UpdateVisitModal: React.FC<props> = ({ visit, visible, schoolId, schoolNam
 
         if (response.data.message == "Success"){
           onAdd();
+          showMessage(`Successfully ${method} visit`, "success");
         }
       } catch (error){
         
+        showMessage("Error connecting with the server", "error");
       }
       onClose();
+
+      
     }
 
   return (
@@ -115,7 +124,7 @@ const UpdateVisitModal: React.FC<props> = ({ visit, visible, schoolId, schoolNam
 
                         {/* INPUT FIELDS */}
                         <View style={styles.list_container}>
-                            <View style={{flexDirection: 'row', alignItems: 'center', margin: 10}}>
+                            <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 10}}>
                               <Text style={styles.schoolName}>Date: </Text>
                               
                               {Platform.OS === 'android' ? (
@@ -133,10 +142,10 @@ const UpdateVisitModal: React.FC<props> = ({ visit, visible, schoolId, schoolNam
                                   />
                               )}
                             </View>
-                            <View style={{flexDirection: 'row', alignItems: 'center', marginHorizontal: 10}}>
+                            <View style={{flexDirection: 'row', alignItems: 'center'}}>
                               <Text style={styles.schoolName}>No. of Attendees: </Text>
                               <TextInput
-                                  style={[styles.input, { flex: 1, margin: 10 }]}
+                                  style={[styles.input, { flex: 1, marginHorizontal: 10 }]}
                                   placeholder={visit ? visit.students.toString() : "Attendance"}
                                   value={attendance}
                                   onChangeText={setAttendance}
@@ -164,7 +173,7 @@ const UpdateVisitModal: React.FC<props> = ({ visit, visible, schoolId, schoolNam
 
   );
 };
-export default UpdateVisitModal;
+export default VisitModal;
 
 const localStyles = StyleSheet.create(
   {
@@ -174,6 +183,7 @@ const localStyles = StyleSheet.create(
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)', // Dark background
+    zIndex: 0, // Set to a lower value than the message modal
   },
   modalContent: {
       width: '80%',
@@ -182,6 +192,7 @@ const localStyles = StyleSheet.create(
       backgroundColor: 'white',
       borderRadius: 10,
       elevation: 5,
+      zIndex: 1, // Ensure the content is on top of the background but lower than message modal
   },
 });
 

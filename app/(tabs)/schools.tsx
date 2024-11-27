@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import { View, Text, TextInput, SafeAreaView, TouchableOpacity, ScrollView, RefreshControl } from "react-native";
 import { styles } from '@/assets/styles';
 import { FontAwesome } from "@expo/vector-icons";
-import SchoolDetailBox from "@/components/school/SchoolDetailBox";
+import SchoolDetailBox from "@/components/school/SchoolDetailCard";
 import LoadingSpinner from '@/components/misc/Loading';
 import AddSchool from '@/components/modals/AddSchool'; // Adjust the path as needed
 import { API_URL, PURPLE_COLOR } from '../constants/constant';
 import { School } from '../constants/types';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function test(){
     const [schoolData, setSchoolData] = useState<School[]>([]);
@@ -48,7 +49,7 @@ export default function test(){
       }, []); // On mount
 
     useEffect(() => {
-        setLoaded(schoolData && schoolData.length > 0);
+        setLoaded(schoolData ? true : false);
     }, [schoolData])
 
     useEffect(() => {
@@ -60,7 +61,8 @@ export default function test(){
         <SafeAreaView style={styles.main_container}>
             <View style={styles.sub_container}>
                 <AddSchool 
-                    visible={modalVisible} 
+                    visible={modalVisible}
+                    onAdd={() => fetchSchools()} 
                     onClose={() => setModalVisible(false)} 
                 />
                 {/* Search bar */}
@@ -92,13 +94,16 @@ export default function test(){
                             onRefresh={fetchSchools} // Fetch visits on refresh
                             tintColor={'#613493'}
                         />
-                    }>
-                    {loaded ? (
+                    } contentContainerStyle={{flexGrow : 1}}>
+                    {loaded && filteredSchools.length > 0 ? (
                         filteredSchools.map(s => (
                             <SchoolDetailBox key={s.id} data={s} />
-                        ))
+                        )) 
                     ) : (
-                        <LoadingSpinner />
+                        <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', alignSelf: 'center', }}>
+                            <Ionicons name="cloud-offline-outline" size={24} color="#666" />
+                            <Text style={[styles.schoolDetails,{margin: 10}]}>No schools found</Text>
+                        </View>
                     )}
                 </ScrollView>
                 <View style={{marginTop: 15, borderTopWidth: 1, borderTopColor: "rgba(97, 52, 147, 0.5)"}}>

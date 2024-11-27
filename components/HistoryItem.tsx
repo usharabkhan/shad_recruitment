@@ -3,6 +3,7 @@ import { HistoryItem, ActivityItem, SchoolVisit } from "@/app/constants/types"
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { API_URL } from "@/app/constants/constant";
 import axios from "axios";
+import { showMessage } from "./misc/ShowMessage";
 
 interface HistoryItemCardProps {
     item: HistoryItem
@@ -40,11 +41,14 @@ export default function HistoryItemCard(  {item, onDelete, editMode}  : HistoryI
         try {
             if (toDel.type === "activity"){
                 const response = await axios.delete(API_URL + 'activity/delete/' + toDel.id);
-                onDelete();
+                if (response.data.message == "Success"){
+                    showMessage("Successfully deleted activity", "success");
+                    onDelete();
+                }
             }
         }
         catch (error) {
-            // do nothing
+            showMessage("Error deleting activity", "error");
         }
     }
     return(
@@ -75,12 +79,14 @@ const styles = {
         borderColor: '#613493'
     },
     historyItemDate: {
+        margin: 2,
         borderBottomWidth: 0.5,
         borderBottomColor: 'rgba(0,0,0,0.5)',
         fontSize: 14,
         fontFamily: 'Inter' 
     },
     historyItemText: {
+        margin: 2,
         flexShrink: 1,
         color: '#666',
         fontSize: 14,

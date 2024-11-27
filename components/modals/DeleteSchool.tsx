@@ -4,7 +4,9 @@ import { Modal, View, Text, TouchableOpacity, TextInput, StyleSheet} from 'react
 import { useState } from 'react';
 import { styles } from '@/assets/styles';
 import { API_URL } from '@/app/constants/constant';
-import { useNavigation } from 'expo-router';
+import { useNavigation, useRouter } from 'expo-router';
+import axios from 'axios';
+import { showMessage } from '../misc/ShowMessage';
 
 interface props {
     schoolId : number;
@@ -14,23 +16,21 @@ interface props {
 }
 
 const DeleteSchoolModal: React.FC<props> = ({ schoolId, schoolName, visible, onClose }) => {
-  const navigation = useNavigation();
+  const nav = useNavigation();
+  const router = useRouter();
     const confirmDelete = async () => {
       try {
-        console.log(schoolId);
-        const response = await fetch(API_URL + 'schools/delete', {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({schoolId})
-        });
-        const json = await response.json();
-        console.log(json);
-        onClose();
-        navigation.goBack();
+        const response = await axios.delete(API_URL + 'schools/delete/' + schoolId );
+        if (response.data.message == "Success"){
+          showMessage("Successfully deleted school", "success");
+          onClose();
+          nav.goBack();
+          router.push('/schools')
+        } else {
+          showMessage(response.data.message, "error");
+        }
       } catch (error) {
-          console.error('Error deleting data:', error);
+        showMessage("Error deleting school", "error");
       }
     }
 
@@ -44,7 +44,7 @@ const DeleteSchoolModal: React.FC<props> = ({ schoolId, schoolName, visible, onC
                 <View style={localStyles.modalContainer}>
                     <View style={localStyles.modalContent}>
                         <Text style={styles.heading}>Are you sure you want to delete {schoolName}'s data?</Text>
-                        <View style={styles.buttonContainer}>
+                        <View style={[styles.buttonContainer, {borderTopWidth: 0}]}>
                             <TouchableOpacity
                                 style={[styles.actionButton, { width: '50%' }]}
                                 onPress={confirmDelete}

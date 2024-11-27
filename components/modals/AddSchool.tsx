@@ -4,13 +4,16 @@ import { Modal, View, Text, TouchableOpacity, TextInput, StyleSheet, TouchableWi
 import { useState } from 'react';
 import { styles } from '@/assets/styles';
 import { API_URL } from '@/app/constants/constant';
+import axios from 'axios';
+import { showMessage } from '../misc/ShowMessage';
 
 interface props {
   visible: boolean; // Define 'visible' as a boolean
+  onAdd: () => void;
   onClose: () => void; // Define 'onClose' as a function that returns void
 }
 
-const AddSchool: React.FC<props> = ( { visible, onClose } ) => {
+const AddSchool: React.FC<props> = ( { visible, onAdd, onClose } ) => {
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
     const [contact, setContact] = useState('');
@@ -26,25 +29,18 @@ const AddSchool: React.FC<props> = ( { visible, onClose } ) => {
 
         try {
           // Send a POST request to API
-          const response = await fetch(API_URL + 'schools/add', 
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(newSchool),
-            }
-          );
+          const response = await axios.post(API_URL + "schools/add", newSchool);
           // If response was not OK
-          if (!response.ok) {
-            throw new Error('Network response was not ok' + response.statusText);
+          if (response.data.message == "Success") {
+            onAdd();
+            showMessage("Successfully added new school", "success");
+          } 
+          else{
+            showMessage("Error adding new school", "error");
           }
-          // Log successful adding of the school
-          const jsonResponse = await response.json();
-          console.log('School added successfully:', jsonResponse);
         }
         catch (error){
-          console.log(error)
+          showMessage("Error adding new school", "error");
         }
         // Reset the fields
         setName('');
@@ -71,28 +67,28 @@ const AddSchool: React.FC<props> = ( { visible, onClose } ) => {
                     <Text style={styles.heading}>Add New School</Text>
                     <View style={styles.list_container}>
                     <TextInput
-                        style={[styles.input, {flex: 0, margin: 10}]}
+                        style={[styles.input, {flex: 0, marginBottom: 10}]}
                         placeholder="School Name"
                         placeholderTextColor="#999"
                         value={name}
                         onChangeText={setName}
                     />
                     <TextInput
-                        style={[styles.input, {flex: 0, margin: 10}]}
+                        style={[styles.input, {flex: 0, marginBottom: 10}]}
                         placeholder="Address"
                         placeholderTextColor="#999"
                         value={address}
                         onChangeText={setAddress}
                     />
                     <TextInput
-                        style={[styles.input, {flex: 0, margin: 10}]}
+                        style={[styles.input, {flex: 0, marginBottom: 10}]}
                         placeholder="Contact Person"
                         placeholderTextColor="#999"
                         value={contact}
                         onChangeText={setContact}
                     />
                     <TextInput
-                        style={[styles.input, {flex: 0, margin: 10}]}
+                        style={[styles.input, {flex: 0, marginBottom: 10}]}
                         placeholder="Type (Public/Private)"
                         placeholderTextColor="#999"
                         value={type}

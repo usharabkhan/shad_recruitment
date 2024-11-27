@@ -13,7 +13,7 @@ export const styles = {
   list_container: {
     width: '100%' as DimensionValue, 
     marginTop: 15,
-    padding: 0, 
+    padding: 15, 
     backgroundColor: '#AADEE1',
     borderRadius: 8,
     borderWidth: 1,
@@ -28,7 +28,7 @@ export const styles = {
       borderRadius: 8,
     },
   schoolItem: {
-      margin: 15,
+      marginBottom: 15,
       padding: 15,
       backgroundColor: '#f9f9f9',
       borderRadius: 8,
@@ -94,7 +94,7 @@ export const styles = {
       padding: 15,
       backgroundColor: '#f9f9f9',
       borderRadius: 8,
-      margin: 15,
+      marginBottom: 15,
       borderWidth: 1,
       borderColor: 'rgba(97, 52, 147, 0.5)',
     },

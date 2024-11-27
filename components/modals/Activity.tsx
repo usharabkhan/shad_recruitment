@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { styles } from '@/assets/styles';
 import DateTimePicker, {DateTimePickerEvent} from '@react-native-community/datetimepicker';
 import { API_URL } from '@/app/constants/constant';
-
+import { showMessage } from '../misc/ShowMessage';
 
 interface props {
   schoolId : number;
@@ -21,7 +21,8 @@ const AddActivity: React.FC<props> = ({ schoolId, schoolName, visible, onClose, 
   const [description, setDescription] = useState('');
   const [showPicker, setShowPicker] = useState(true);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  
+  // const { showModal } = useModal();
+
     const handleChange = (event: any, date?: Date) => {
       if (Platform.OS === 'android') {
           setShowPicker(false); // Close the picker on Android after selection
@@ -49,16 +50,15 @@ const AddActivity: React.FC<props> = ({ schoolId, schoolName, visible, onClose, 
         console.log(json);
         if (json.message == "Success"){
           
+          showMessage("Successfully added activity", "success");
           onAdd();
         }
       } catch (error) {
           console.error('Error adding activity:', error);
+          showMessage("Error adding activity", "error");
       }
     }
     
-    const handleDeleteActivity = async () => {
-
-    }
   return (
         <Modal
           animationType="fade"
@@ -75,7 +75,7 @@ const AddActivity: React.FC<props> = ({ schoolId, schoolName, visible, onClose, 
                     <View style={styles.modalContent}>
                         <Text style={styles.heading}>{schoolName}</Text>
                         <View style={styles.list_container}>
-                            <View style={{flexDirection: 'row', alignItems: 'center', margin: 10}}>
+                            <View style={{flexDirection: 'row', alignItems: 'center'}}>
                               <Text style={styles.schoolName}>Date: </Text>
                               
                               {Platform.OS === 'android' ? (
@@ -93,9 +93,9 @@ const AddActivity: React.FC<props> = ({ schoolId, schoolName, visible, onClose, 
                                   />
                               )}
                             </View>
-                            <Text style={[styles.schoolName, {marginLeft: 10}]}>Description: </Text>
+                            <Text style={[styles.schoolName, {marginVertical: 10}]}>Description: </Text>
                             <TextInput
-                                style={[styles.input, { height: 80, minHeight: 80, flex: 0, margin: 10 }]}
+                                style={[styles.input, { height: 80, minHeight: 80, flex: 0, margin: 0 }]}
                                 placeholder="Description"
                                 placeholderTextColor={'#ccc'}
                                 value={description}

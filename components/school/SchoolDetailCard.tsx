@@ -8,7 +8,7 @@ interface props {
     data: School;
 }
 
-export default function SchoolDetailBox( { data }: props ){
+export default function SchoolDetailCard( { data }: props ){
     const router = useRouter();
 
     // Ensure that data.name is always a string

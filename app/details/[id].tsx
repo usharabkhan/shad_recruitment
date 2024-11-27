@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from '@/assets/styles';
 import AddActivity from "@/components/modals/Activity";
 import DeleteSchoolModal from "@/components/modals/DeleteSchool";
-import UpdateVisitModal from "@/components/modals/UpdateVisit"; 
+import UpdateVisitModal from "@/components/modals/Visit"; 
 import { API_URL } from "../constants/constant";
 import HistoryItemCard from "@/components/HistoryItem";
 import { HistoryItem, ActivityItem, School } from "../constants/types";
@@ -33,16 +33,24 @@ const SchoolDetail = () => {
     const navigation = useNavigation();
     const { id } = useLocalSearchParams();
 
+    const fetchData = async () => {
+        const fetchedSchool = await axios.get(API_URL + 'schools/' + id)
+        setSchool(fetchedSchool.data)
+        refreshActivityData();
+    }
+    // Function to refresh activity data after adding activity
+    const refreshActivityData = async () => {
+        try {
+            const fetchedHistory = await axios.get(API_URL + 'activity/' + id)
+            setActivity(fetchedHistory.data)
+        } catch (error) {
+            console.error('Error fetching activity data:', error);
+        }
+    };
+
     useEffect(() => {
-        fetch(API_URL + 'schools/' + id)
-          .then(response => response.json())
-          .then(json => setSchool(json))
-          .catch(error => console.error('Error fetching data:', error)); // Add error handling
-        fetch(API_URL + 'activity/' + id)
-            .then(response => response.json())
-            .then(json => setActivity(json))
-            .catch(error => console.error('Error fetching data: ', error));
-      }, []); // Empty dependency array to fetch data once on mount
+        fetchData()
+    }, []); // Empty dependency array to fetch data once on mount
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -52,16 +60,7 @@ const SchoolDetail = () => {
         });
     }, [navigation]);
 
-    // Function to refresh activity data after adding activity
-    const refreshActivityData = async () => {
-        try {
-            const response = await fetch(API_URL + 'activity/' + id);
-            const data = await response.json();
-            setActivity(data); // Update activity state with the new data
-        } catch (error) {
-            console.error('Error fetching activity data:', error);
-        }
-    };
+    
     
     const toggleEditMode = () => {
         setEditMode(!editMode);
@@ -97,18 +96,17 @@ const SchoolDetail = () => {
 
                 {/* SCHOOL DETAILS SECTION */}
                 
-                <Text style={styles.heading}>School Details</Text>   
+                <Text style={styles.heading}>{school.name}</Text>   
                 <View style={localStyle.localContainer}> 
                     <Image
                         source={require('@/assets/images/school_icon.png')} // Replace with your image URL
-                        style={{width: 100, height: 100}}
+                        style={{width: 100, height: 100, marginRight: 10}}
                         />
                         {school ? (
                             <View style={[styles.visitcontainer, {flexDirection: 'column', flex: 1}]}>
                                 
-                                <Text style={styles.schoolName}>{school?.name || "No name available"}</Text>
+                                <Text style={styles.schoolName}>{school?.contact}</Text>
                                 <Text style={styles.schoolDetails}>{school?.address || "No address available"}</Text>
-                                <Text style={styles.schoolDetails}>Contact: {school?.contact || "No contact available"}</Text>
                                 <Text style={styles.schoolDetails}>Type: {school?.type || "No type available"}</Text>
                             </View>
                         ) : (<Text>Error</Text>)}
@@ -145,7 +143,7 @@ const SchoolDetail = () => {
                 {/* ACTIVITY LIST */}
 
                 <View style={[styles.list_container, {flex: 1}]}>
-                    <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 10 }}>
+                    <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 0 }}>
                             {activity.length === 0 && 
                             (
                                 <View
@@ -208,7 +206,8 @@ const localStyle = {
         elevation: 5,
       },
     localContainer: {
-      paddingLeft: 10,
+      paddingHorizontal: 15,
+      paddingTop: 15,
       backgroundColor: '#AADEE1',
       borderRadius: 8,
       flexDirection: 'row' as 'row',
